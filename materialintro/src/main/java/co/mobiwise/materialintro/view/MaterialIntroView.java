@@ -694,11 +694,6 @@ public class MaterialIntroView extends RelativeLayout {
             return this;
         }
 
-        public Builder setIdempotent(boolean idempotent) {
-            materialIntroView.setIdempotent(idempotent);
-            return this;
-        }
-
         public Builder setConfiguration(MaterialIntroConfiguration configuration) {
             materialIntroView.setConfiguration(configuration);
             return this;
