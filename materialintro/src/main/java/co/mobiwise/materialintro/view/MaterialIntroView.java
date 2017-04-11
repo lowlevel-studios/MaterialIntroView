@@ -28,7 +28,6 @@ import co.mobiwise.materialintro.R;
 import co.mobiwise.materialintro.animation.AnimationFactory;
 import co.mobiwise.materialintro.animation.AnimationListener;
 import co.mobiwise.materialintro.animation.MaterialIntroListener;
-import co.mobiwise.materialintro.prefs.PreferencesManager;
 import co.mobiwise.materialintro.shape.Circle;
 import co.mobiwise.materialintro.shape.Focus;
 import co.mobiwise.materialintro.shape.FocusGravity;
@@ -176,13 +175,6 @@ public class MaterialIntroView extends RelativeLayout {
     private boolean isImageViewEnabled;
 
     /**
-     * Save/Retrieve status of MaterialIntroView
-     * If Intro is already learnt then don't show
-     * it again.
-     */
-    private PreferencesManager preferencesManager;
-
-    /**
      * Check using this Id whether user learned
      * or not.
      */
@@ -204,11 +196,6 @@ public class MaterialIntroView extends RelativeLayout {
      * if this is true
      */
     private boolean isPerformClick;
-
-    /**
-     * Disallow this MaterialIntroView from showing up more than once at a time
-     */
-    private boolean isIdempotent;
 
     /**
      * Shape of target
@@ -264,14 +251,11 @@ public class MaterialIntroView extends RelativeLayout {
         isDotViewEnabled = false;
         isPerformClick = false;
         isImageViewEnabled = true;
-        isIdempotent = false;
 
         /**
          * initialize objects
          */
         handler = new Handler();
-
-        preferencesManager = new PreferencesManager(context);
 
         eraser = new Paint();
         eraser.setColor(0xFFFFFFFF);
@@ -400,9 +384,6 @@ public class MaterialIntroView extends RelativeLayout {
      */
     private void show(Activity activity) {
 
-        if (preferencesManager.isDisplayed(materialIntroViewId))
-            return;
-
         ((ViewGroup) activity.getWindow().getDecorView()).addView(this);
 
         setReady(true);
@@ -421,20 +402,12 @@ public class MaterialIntroView extends RelativeLayout {
                     setVisibility(VISIBLE);
             }
         }, delayMillis);
-
-        if(isIdempotent) {
-            preferencesManager.setDisplayed(materialIntroViewId);
-        }
     }
 
     /**
      * Dismiss Material Intro View
      */
     public void dismiss() {
-        if(!isIdempotent) {
-            preferencesManager.setDisplayed(materialIntroViewId);
-        }
-
         AnimationFactory.animateFadeOut(this, fadeAnimationDuration, new AnimationListener.OnAnimationEndListener() {
             @Override
             public void onAnimationEnd() {
@@ -596,10 +569,6 @@ public class MaterialIntroView extends RelativeLayout {
 
     private void enableImageViewIcon(boolean isImageViewEnabled){
         this.isImageViewEnabled = isImageViewEnabled;
-    }
-
-    private void setIdempotent(boolean idempotent){
-        this.isIdempotent = idempotent;
     }
 
     private void enableDotView(boolean isDotViewEnabled){
